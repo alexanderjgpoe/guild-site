@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Catastrophe Import Tool</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #111; color: #eee; }
+    textarea { width: 100%; height: 300px; padding: 10px; font-family: monospace; }
+    button { margin-top: 10px; padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 5px; }
+    .status { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Guild Loot & Attendance Import</h1>
+  <p>Paste the addon export text below and click Submit:</p>
+  <textarea id="inputBox" placeholder="Paste addon export here..."></textarea>
+  <br>
+  <button onclick="submitData()">Submit</button>
+  <div class="status" id="status"></div>
+
+  <script>
+
+    const SUPABASE_URL = "https://elqopjkcfuvtbpafnfet.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscW9wamtjZnV2dGJwYWZuZmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc4NTI0NDcsImV4cCI6MjA3MzQyODQ0N30.H7WitHdiONiOkK1FICXMtNhiHFG8ThzKT6h2CRsFEPs";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function submitData() {
+      const statusEl = document.getElementById("status");
+      const input = document.getElementById("inputBox").value.trim();
+      if (!input) {
+        statusEl.innerText = "No input provided.";
+        return;
+      }
+
+      statusEl.innerText = "Importing...";
+
+      // Split input into lines
+      const rows = input.split("\n").map(line => {
+        const parts = line.split(",").map(p => p.trim()); 
+        return {
+        raw_text: line
+        };
+      });
+
+      // Insert into import_raw
+      const { error } = await supabase.from("import_raw").insert(rows);
+
+      if (error) {
+        statusEl.innerText = "Error: " + error.message;
+        return;
+      }
+
+      // Call stored procedure to process
+      const { error: rpcError } = await supabase.rpc("process_import_raw");
+
+      if (rpcError) {
+        statusEl.innerText = "Processing error: " + rpcError.message;
+      } else {
+        statusEl.innerText = "✅ Import successful!";
+        document.getElementById("inputBox").value = "";
+      }
+    }
+  </script>
+</body>
+</html>

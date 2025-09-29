@@ -69,7 +69,7 @@ async function submitData() {
   }
 
   // Call the Supabase function to process rows
-  const { error: rpcError } = await supabase.rpc("import_raw");
+  const { error: rpcError } = await supabase.rpc("process_import_raw");
 
   if (rpcError) {
     statusEl.innerText = "Processing error: " + rpcError.message;

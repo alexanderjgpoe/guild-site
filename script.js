@@ -9,7 +9,7 @@ const attendanceRegex = /^([^,]+),\s*(\d{2}-\d{2}-\d{4})$/;
 
 async function submitData() {
   const statusEl = document.getElementById("status");
-  const input = document.getElementById("inputBox").value.trim();
+  const input = document.getElementById("data-input").value.trim();
   if (!input) {
     statusEl.innerText = "No input provided.";
     return;
@@ -35,11 +35,11 @@ async function submitData() {
   }
 
   if (validRows.length === 0) {
-    statusEl.innerText = "❌ No valid loot/attendance lines found.";
+    statusEl.innerText = "No valid loot/attendance lines found.";
     return;
   }
 
-
+  // Check for duplicates in DB
   const { data: existing, error: fetchError } = await supabase
     .from("import_raw")
     .select("raw_text")
@@ -56,36 +56,40 @@ async function submitData() {
   duplicateRows = validRows.filter(r => existingSet.has(r.raw_text));
 
   if (newRows.length === 0) {
-    statusEl.innerText = "⚠️ All lines were already imported. Nothing new added.";
+    statusEl.innerText = "All lines were already imported. Nothing new added.";
     return;
   }
-
 
   statusEl.innerText = "Importing...";
   const { error } = await supabase.from("import_raw").insert(newRows);
 
   if (error) {
-    statusEl.innerText = "Error: " + error.message;
+    statusEl.innerText = "Error inserting rows: " + error.message;
     return;
   }
 
-  // Process rows
-  const { error: rpcError } = await supabase.rpc("process_import_raw");
+  // Call the Supabase function to process rows
+  const { error: rpcError } = await supabase.rpc("import_raw");
 
   if (rpcError) {
     statusEl.innerText = "Processing error: " + rpcError.message;
     return;
   }
 
- 
-  let msg = `Import successful! Added ${newRows.length} new line(s).`;
+  let msg = `✅ Import successful! Added ${newRows.length} new line(s).`;
   if (duplicateRows.length > 0) {
-    msg += `Skipped ${duplicateRows.length} duplicate(s).`;
+    msg += ` Skipped ${duplicateRows.length} duplicate(s).`;
   }
   if (invalidRows.length > 0) {
-    msg += `Skipped ${invalidRows.length} invalid line(s).`;
+    msg += ` Skipped ${invalidRows.length} invalid line(s).`;
   }
 
   statusEl.innerText = msg;
-  document.getElementById("inputBox").value = "";
+  document.getElementById("data-input").value = "";
 }
+
+// Hook up the form submit
+document.getElementById("import-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await submitData();
+});

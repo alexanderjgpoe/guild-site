@@ -14,54 +14,13 @@
 <body>
   <h1>Guild Loot & Attendance Import</h1>
   <p>Paste the addon export text below and click Submit:</p>
-  <textarea id="inputBox" placeholder="Paste addon export here..."></textarea>
-  <br>
-  <button onclick="submitData()">Submit</button>
+  <form id="import-form">
+    <textarea id="data-input" placeholder="Paste addon export here..."></textarea>
+    <br>
+    <button type="submit">Submit</button>
+  </form>
   <div class="status" id="status"></div>
 
-  <script>
-
-    const SUPABASE_URL = "https://elqopjkcfuvtbpafnfet.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscW9wamtjZnV2dGJwYWZuZmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc4NTI0NDcsImV4cCI6MjA3MzQyODQ0N30.H7WitHdiONiOkK1FICXMtNhiHFG8ThzKT6h2CRsFEPs";
-
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function submitData() {
-      const statusEl = document.getElementById("status");
-      const input = document.getElementById("inputBox").value.trim();
-      if (!input) {
-        statusEl.innerText = "No input provided.";
-        return;
-      }
-
-      statusEl.innerText = "Importing...";
-
-      // Split input into lines
-      const rows = input.split("\n").map(line => {
-        const parts = line.split(",").map(p => p.trim()); 
-        return {
-        raw_text: line
-        };
-      });
-
-      // Insert into import_raw
-      const { error } = await supabase.from("import_raw").insert(rows);
-
-      if (error) {
-        statusEl.innerText = "Error: " + error.message;
-        return;
-      }
-
-      // Call stored procedure to process
-      const { error: rpcError } = await supabase.rpc("process_import_raw");
-
-      if (rpcError) {
-        statusEl.innerText = "Processing error: " + rpcError.message;
-      } else {
-        statusEl.innerText = "✅ Import successful!";
-        document.getElementById("inputBox").value = "";
-      }
-    }
-  </script>
+<script src="script.js"></script>
 </body>
 </html>

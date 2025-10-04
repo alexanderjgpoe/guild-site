@@ -4,31 +4,18 @@
   <meta charset="UTF-8">
   <title>Guild Loot & Attendance</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: sans-serif; background: #111; color: #eee; padding: 2rem; }
-    h1, h2 { color: #4a90e2; }
-    nav a { color: #eee; margin-right: 1rem; text-decoration: none; }
-    nav a:hover { text-decoration: underline; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
-    th, td { padding: 8px; border: 1px solid #444; text-align: left; }
-    th { background: #333; }
-    tr:nth-child(even) { background: #222; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Import (Officers)</a>
-    <a href="view.html">Loot & Attendance</a>
-  </nav>
-<header class="navbar">
-  <div class="nav-container">
-    <h1 class="logo">Catastrophe Guild</h1>
-    <nav>
-      <a href="index.html" class="nav-link">Data Input</a>
-      <a href="view.html" class="nav-link">Loot & Attendance</a>
-    </nav>
-  </div>
-</header>
+  <header class="navbar">
+    <div class="nav-container">
+      <h1 class="logo">Catastrophe Guild</h1>
+      <nav>
+        <a href="index.html" class="nav-link">Data Input</a>
+        <a href="view.html" class="nav-link">Loot & Attendance</a>
+      </nav>
+    </div>
+  </header>
 
   <h1>Guild Data</h1>
 
@@ -57,12 +44,6 @@
     </thead>
     <tbody></tbody>
   </table>
-
-  <nav style="margin-bottom:20px;">
-  <a href="index.html" style="margin-right:15px; color:#4a90e2;">Data Input</a>
-  <a href="view.html" style="color:#4a90e2;">Loot & Attendance</a>
-</nav>
-
 
   <script>
     const SUPABASE_URL = "https://elqopjkcfuvtbpafnfet.supabase.co";

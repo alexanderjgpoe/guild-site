@@ -1,0 +1,37 @@
+/* Navigation bar */
+.navbar {
+  background: #1c1c1c;
+  padding: 0.8rem 2rem;
+  border-bottom: 2px solid #ffd700;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.logo {
+  color: #ffd700;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+nav .nav-link {
+  color: #eee;
+  margin-left: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, border-bottom 0.2s ease;
+  padding-bottom: 4px;
+}
+
+nav .nav-link:hover {
+  color: #ffd700;
+  border-bottom: 2px solid #ffd700;
+}
